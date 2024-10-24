@@ -1,0 +1,66 @@
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <!-- Navbar Toggler for small screens -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Brand or username -->
+    {% if user.is_authenticated %}
+    <a class="navbar-brand" href="{% url 'profile' user.pk %}">{{ user.username }}</a>
+    {% else %}
+    <a class="navbar-brand" href="{% url 'home' %}">Guest</a>
+    {% endif %}
+
+    <!-- Collapsible part of the navbar -->
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <!-- Navbar items aligned horizontally for larger screens -->
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'home' %}">
+            <i class="fas fa-home">&nbsp;</i>Home
+          </a>
+        </li>
+
+        <!-- Conditional items based on authentication -->
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' user.pk %}">
+              <i class="fa-solid fa-user">&nbsp;</i>Profile
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-lock">&nbsp;</i>Authentication
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+              <a class="dropdown-item" href="{% url 'signup' %}">Sign up</a>
+            </div>
+          </li>
+        {% endif %}
+
+        <!-- Additional authenticated items -->
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'add_post' %}">
+              <i class="fas fa-add">&nbsp;</i>Add Post
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'inbox' %}">
+              <i class="fa-solid fa-message">&nbsp;</i>Messages
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <!-- Search form aligned to the right -->
+      <form class="d-flex mt-3" role="search" action="{% url 'search_posts' %}" method="get">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search" required>
+        <button class="btn btn-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>

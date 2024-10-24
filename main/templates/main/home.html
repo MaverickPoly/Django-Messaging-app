@@ -1,0 +1,182 @@
+{% extends "main/utils/base.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+
+<br/>
+<br/>
+
+<div class="container mt-5">
+    <!-- Filter Tabs -->
+    <ul class="nav nav-tabs" id="postTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="all-tab" data-bs-toggle="tab" href="#all-posts" role="tab" aria-controls="all-posts" aria-selected="true">All</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="text-tab" data-bs-toggle="tab" href="#text-posts" role="tab" aria-controls="text-posts" aria-selected="false">Text</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="image-tab" data-bs-toggle="tab" href="#image-posts" role="tab" aria-controls="image-posts" aria-selected="false">Images</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="video-tab" data-bs-toggle="tab" href="#video-posts" role="tab" aria-controls="video-posts" aria-selected="false">Videos</a>
+        </li>
+    </ul>
+
+    <!-- Posts Content -->
+    <div class="tab-content mt-3">
+        <!-- All Posts -->
+        <div class="tab-pane fade show active" id="all-posts" role="tabpanel" aria-labelledby="all-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for post in all_posts %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if post.post_type == 'image' %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="Image">
+                        {% elif post.post_type == 'video' %}
+                        <video controls class="card-img-top">
+                            <source src="{{ post.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|truncatewords:40 }}</p>
+                            <div class="d-flex align-items-center">
+                                <a href="{% url 'profile' post.user.pk %}">
+                                    <img src="{{ post.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="40" height="40">
+                                </a>
+                                <span class="ms-2">{{ post.user.username }}</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="card-footer">
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read</a>
+                            <div class="collapse mt-2" id="postDetails{{ post.id }}">
+                                <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                <p><strong>Comments:</strong> Coming Soon!</p>
+                                <!-- Placeholder for Comments Section -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No posts available.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Text Posts -->
+        <div class="tab-pane fade" id="text-posts" role="tabpanel" aria-labelledby="text-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for post in text_posts %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                            <div class="d-flex align-items-center">
+                                <a href="{% url 'profile' post.user.pk %}">
+                                    <img src="{{ post.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="40" height="40">
+                                </a>
+                                <span class="ms-2">{{ post.user.username }}</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="card-footer">
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read</a>
+                            <div class="collapse mt-2" id="postDetails{{ post.id }}">
+                                <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                <p><strong>Comments:</strong> Coming Soon!</p>
+                                <!-- Placeholder for Comments Section -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No text posts available.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Image Posts -->
+        <div class="tab-pane fade" id="image-posts" role="tabpanel" aria-labelledby="image-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for post in image_posts %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                            <div class="d-flex align-items-center">
+                                <a href="{% url 'profile' post.user.pk %}">
+                                    <img src="{{ post.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="40" height="40">
+                                </a>
+                                <span class="ms-2">{{ post.user.username }}</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="card-footer">
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read</a>
+                            <div class="collapse mt-2" id="postDetails{{ post.id }}">
+                                <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                <p><strong>Comments:</strong> Coming Soon!</p>
+                                <!-- Placeholder for Comments Section -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No image posts available.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Video Posts -->
+        <div class="tab-pane fade" id="video-posts" role="tabpanel" aria-labelledby="video-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for post in video_posts %}
+                <div class="col">
+                    <div class="card h-100">
+                        <video controls class="card-img-top">
+                            <source src="{{ post.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                            <div class="d-flex align-items-center">
+                                 <a href="{% url 'profile' post.user.pk %}">
+                                    <img src="{{ post.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="40" height="40">
+                                </a>
+                                <span class="ms-2">{{ post.user.username }}</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="card-footer">
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read</a>
+                            <div class="collapse mt-2" id="postDetails{{ post.id }}">
+                                <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                <p><strong>Comments:</strong> Coming Soon!</p>
+                                <!-- Placeholder for Comments Section -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No video posts available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+<!-- profile.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} {{ query }} {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<div class="container mt-5">
+    <h2>Search Results for "{{ query }}"</h2>
+    
+    {% if page_obj %}
+        <ul class="list-group mt-3">
+            {% for post in page_obj %}
+                <li class="list-group-item">
+                    <h5>{{ post.title }}</h5>
+                    <p>
+                        {% if post.post_type == 'text' %}
+                            {{ post.content|truncatewords:30 }}
+                        {% elif post.post_type == 'image' %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid">
+                        {% elif post.post_type == 'video' %}
+                            <video src="{{ post.video.url }}" controls class="img-fluid"></video>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Read More</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-3">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p>No results found for your query.</p>
+    {% endif %}
+</div>
+{% endblock %}

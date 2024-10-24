@@ -1,0 +1,82 @@
+{% extends "main/utils/base.html" %}
+
+{% block title %}
+Inbox - {{ user.username }}
+{% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<div class="inbox-container">
+    <h2>Inbox</h2>
+
+    {% if incoming_messages %}
+    <ul class="message-list">
+        {% for message in incoming_messages %}
+        <li class="message-item {% if not message.is_read %}unread-message{% endif %}">
+            <div class="message-content">
+                <strong>From: {{ message.sender.username }}</strong>
+                <p>{{ message.content }}</p>
+                <small>Received on: {{ message.time_created|date:"Y-m-d H:i" }}</small>
+            </div>
+            <form action="{% url 'delete_message' message.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No messages in your inbox.</p>
+    {% endif %}
+</div>
+
+<style>
+    .unread-message {
+        border-left: 5px solid #007bff;
+        background-color: #e9ecef;
+    }
+
+    .inbox-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .message-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .message-item {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .message-content {
+        max-width: 75%;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+</style>
+
+{% endblock %}

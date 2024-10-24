@@ -1,0 +1,181 @@
+<!-- profile.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} Profile - {{ viewed_profile.user.username }} {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+
+<br/>
+<br/>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-4 col-md-5 mb-4">
+            <div class="card">
+                <img src="{{ viewed_profile.profile_image.url }}" alt="Profile picture" class="img-fluid rounded-circle mx-auto d-block mt-3" style="width: 250px;">
+                <div class="card-body text-center">
+                    <h3 class="card-title"> {{ viewed_profile.user.username }}</h3>
+                    <h4 class="card-title"> {{ viewed_profile.user.email }}</h4>
+
+                    <div class="p-3 mb-2 bg-success-subtle text-success-emphasis">
+                        <a href="{% url 'subscribers_list' viewed_user.pk %}">Subscribers: {{ viewed_profile.followed_by.count }}</a>
+                    </div>
+                    <div class="p-3 mb-2 bg-success-subtle text-success-emphasis">
+                        <a href="{% url 'subscriptions_list' viewed_user.pk %}">Subscribed to: {{ viewed_profile.follows.count }}</a>
+                    </div>
+                    {% if viewed_profile.bio %}
+                        <div class="p-3 mb-2 bg-body-secondary">{{ viewed_profile.bio }}</div>
+                    {% else %}
+                        <div class="p-3 mb-2 bg-body-secondary">No bio...</div>
+                    {% endif %}
+
+                   {% if viewed_profile.country %}
+                        <p class="card-text">Country: {{ viewed_profile.country }}</p>
+                    {% else %}
+                        <p class="card-text">No country is set</p>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    {% if is_owner %}
+                    <div>
+                        <a href="{% url 'edit_profile' user.pk %}" class="btn btn-primary btn-block">Edit Profile</a>
+                    </div>
+                    <br/>
+                    <a href="{% url 'logout' %}" class="btn btn-danger btn-block">Logout</a>
+                    {% else %}
+                    {% if user.is_authenticated %}
+                    {% if is_subscribed %}
+                    <a href="{% url 'unsubscribe' viewed_user.pk %}" class="btn btn-danger btn-block">Unsubscribe</a> <br/><br/>
+                    {% else %}
+                    <a href="{% url 'subscribe' viewed_user.pk %}" class="btn btn-success btn-block">Subscribe</a> <br/><br/>
+                    {% endif %}
+                    <a href="{% url 'chat' viewed_user.pk %}" class="btn btn-secondary">View chat</a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-8 col-md-7">
+            <ul class="nav nav-tabs" id="postTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="text-tab" data-bs-toggle="tab" href="#text-posts" role="tab" aria-controls="text-posts" aria-selected="true">Text Posts</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="image-tab" data-bs-toggle="tab" href="#image-posts" role="tab" aria-controls="image-posts" aria-selected="false">Image Posts</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="video-tab" data-bs-toggle="tab" href="#video-posts" role="tab" aria-controls="video-posts" aria-selected="false">Video Posts</a>
+                </li>
+            </ul>
+
+
+            <div class="tab-content mt-3">
+                <!-- Text Posts -->
+                <div class="tab-pane fade show active" id="text-posts" role="tabpanel" aria-labelledby="text-tab">
+                    {% for post in user_posts_text %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            {% if post.content %}
+                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                            {% endif %}
+
+                            <br>
+                            <div class="card-footer">
+                                <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read</a>
+                                {% if is_owner %}
+                                <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary">Edit</a>
+                                {% endif %}
+                                <div class="collapse mt-2" id="postDetails">
+                                    <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                    <p><strong>Comments:</strong> Coming Soon!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No Text Posts available</p>
+                    {% endfor %}
+                </div>
+
+
+                <!-- Image Posts -->
+                <div class="tab-pane fade" id="image-posts" role="tabpanel" aria-labelledby="image-tab">
+                    <div class="container">
+                        <div class="row">
+                            {% for post in user_posts_image %}
+                                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
+                                    <div class="card h-100">
+                                        <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title">{{ post.title }}</h5>
+                                            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+
+                                            <div>
+                                                <a href="{% url 'post_detail' post.id %}" class="btn btn-primary mt-auto">Read</a>
+                                                {% if is_owner %}
+                                                <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary">Edit</a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="collapse mt-2">
+                                                <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                                <p><strong>Comments:</strong> Coming Soon!</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="col-12">
+                                    <p>No Image Posts available</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Video Posts -->
+                <div class="tab-pane fade" id="video-posts" role="tabpanel" aria-labelledby="video-tab">
+                    {% for post in user_posts_video %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            {% if post.video %}
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <video controls class="embed-responsive-item">
+                                    <source src="{{ post.video.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            {% endif %}
+
+                            <br>
+                            <div class="card-footer">
+                                <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Watch</a>
+                                <br>
+                                {% if is_owner %}
+                                <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary">Edit</a>
+                                {% endif %}
+                                <div class="collapse mt-2">
+                                    <p><strong>Likes:</strong> {{ post.total_likes }}</p>
+                                    <p><strong>Comments:</strong> Coming Soon!</p>
+                                    <!-- Placeholder for Comments Section -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No Video Posts available</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

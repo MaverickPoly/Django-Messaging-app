@@ -1,0 +1,81 @@
+<!-- post_detail.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} Post Details - {{ post.title }} {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<br/>
+<br/>
+
+<div class="container mt-4">
+    <div class="card">
+        {% if post.post_type == 'image' %}
+        <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+        {% elif post.post_type == 'video' %}
+        <video controls class="card-img-top">
+            <source src="{{ post.video.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ post.title }}</h3>
+            {% if post.content %}
+            <p class="card-text">{{ post.content }}</p>
+            {% endif %}
+            <div class="d-flex align-items-center">
+                <a href="{% url 'profile' post.user.pk %}">
+                    <img src="{{ post.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="50" height="50">
+                </a>
+                <span class="ms-2">{{ post.user.username }}</span>
+                {% if user != post.user %}
+                {% if is_subscribed %}
+                <a href="{% url 'unsubscribe' post.user.pk %}" class="btn btn-danger btn-block">Unsubscribe</a> <br/><br/>
+                {% else %}
+                <a href="{% url 'subscribe' post.user.pk %}" class="btn btn-success btn-block">Subscribe</a> <br/><br/>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-footer">
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="like" class="btn {% if request.user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    <i class="fa fa-thumbs-up"></i> {{ post.total_likes }} Likes
+                </button>
+            </form>
+            <button class="btn btn-outline-secondary" data-bs-toggle="collapse" href="#commentsSection" role="button" aria-expanded="false" aria-controls="commentsSection">Comments</button>
+            <div class="collapse mt-2" id="commentsSection">
+                <p><strong>Comments:</strong></p>
+
+                <!-- Comment Form -->
+                <form method="post" class="mb-3">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" name="comment" class="btn btn-primary">Add Comment</button>
+                </form>
+
+                <!-- Display Comments -->
+                {% for comment in comments %}
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'profile' comment.user.pk %}">
+                                <img src="{{ comment.user.profile.profile_image.url }}" alt="User Profile" class="rounded-circle" width="40" height="40">
+                            </a>
+                            <span class="ms-2">{{ comment.user.username }}</span>
+                            <span class="text-muted ms-auto">{{ comment.time_created|date:"M d, Y H:i" }}</span>
+                        </div>
+                        <p class="mt-2">{{ comment.content }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

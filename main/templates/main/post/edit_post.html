@@ -1,0 +1,28 @@
+<!-- edit_post.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} {{ post.title }} {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<br>
+<br>
+
+ <div class="container mt-4">
+    <h2>Edit Post: {{ post.title }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <button type="submit" class="btn btn-primary">Update Post</button>
+    </form>
+
+    <form method="POST" action="{% url 'delete_post' post.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger mt-3">Delete Post</button>
+    </form>
+  </div>
+
+{% endblock %}

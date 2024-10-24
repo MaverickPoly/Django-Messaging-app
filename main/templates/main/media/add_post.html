@@ -1,0 +1,68 @@
+<!-- add_post.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} Add Post {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+
+<br/>
+<br/>
+
+<div class="container mt-5">
+    <ul class="nav nav-tabs" id="postTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="text-tab" data-bs-toggle="tab" href="#text-form" role="tab" aria-controls="text-form" aria-selected="true" data-type="text">Text Post</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="image-tab" data-bs-toggle="tab" href="#image-form" role="tab" aria-controls="image-form" aria-selected="false" data-type="image">Image Post</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="video-tab" data-bs-toggle="tab" href="#video-form" role="tab" aria-controls="video-form" aria-selected="false" data-type="video">Video Post</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <!-- Text Post Form -->
+        <div class="tab-pane fade show active" id="text-form" role="tabpanel" aria-labelledby="text-tab">
+            <form method="post" enctype="multipart/form-data" action="{% url 'add_post' %}">
+                {% csrf_token %}
+                {{ text_form.as_p }}
+                <input type="hidden" name="post_type" value="text">
+                <button type="submit" class="btn btn-primary">Save Post</button>
+            </form>
+        </div>
+
+        <!-- Image Post Form -->
+        <div class="tab-pane fade" id="image-form" role="tabpanel" aria-labelledby="image-tab">
+            <form method="post" enctype="multipart/form-data" action="{% url 'add_post' %}">
+                {% csrf_token %}
+                {{ image_form.as_p }}
+                <input type="hidden" name="post_type" value="image">
+                <button type="submit" class="btn btn-primary">Save Post</button>
+            </form>
+        </div>
+
+        <!-- Video Post Form -->
+        <div class="tab-pane fade" id="video-form" role="tabpanel" aria-labelledby="video-tab">
+            <form method="post" enctype="multipart/form-data" action="{% url 'add_post' %}">
+                {% csrf_token %}
+                {{ video_form.as_p }}
+                <input type="hidden" name="post_type" value="video">
+                <button type="submit" class="btn btn-primary">Save Post</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.nav-link').forEach(tab => {
+        tab.addEventListener('click', function () {
+            document.querySelectorAll('input[name="post_type"]').forEach(input => {
+                input.value = tab.getAttribute('data-type');
+            });
+        });
+    });
+</script>
+{% endblock %}

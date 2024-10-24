@@ -1,0 +1,66 @@
+<!-- subscriptions_list.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %}Subscriptions - {{ viewed_profile.user.username }}{% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<br>
+<br>
+
+<div class="container mt-4">
+    <h2>Subscriptions of {{ viewed_profile.user.username }}</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for subscription in subscriptions_page_obj %}
+        <div class="col">
+            <div class="card h-100 text-center">
+                <img src="{{ subscription.profile_image.url }}" alt="Profile picture" class="img-fluid rounded-circle mx-auto mt-3" style="width: 100px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ subscription.user.username }}</h5>
+                    <p class="card-text">{{ subscription.bio|truncatewords:10 }}</p>
+                    <a href="{% url 'profile' subscription.user.pk %}" class="btn btn-primary">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Not subscribed to anyone yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if subscriptions_page_obj %}
+    <div class="mt-3">
+        <nav aria-label="Subscriptions pagination">
+            <ul class="pagination justify-content-center">
+                {% if subscriptions_page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ subscriptions_page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                {% endif %}
+                {% for num in subscriptions_page_obj.paginator.page_range %}
+                <li class="page-item {% if subscriptions_page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if subscriptions_page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ subscriptions_page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

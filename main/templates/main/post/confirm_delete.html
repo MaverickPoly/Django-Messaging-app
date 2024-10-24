@@ -1,0 +1,22 @@
+<!-- edit_post.html -->
+{% extends "main/utils/base.html" %}
+
+{% block title %} {{ post.title }} {% endblock %}
+
+{% block content %}
+{% include "main/utils/navbar.html" %}
+
+<br>
+<br>
+
+<div class="container mt-4">
+  <h2>Confirm Delete</h2>
+  <p>Are you sure you want to delete the post titled "{{ post.title }}"?</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'edit_post' post.id %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
